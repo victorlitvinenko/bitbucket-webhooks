@@ -97,11 +97,11 @@ function formatPRMessage(pr, action) {
             value: pr.author.display_name,
             inline: true,
           },
-          //   {
-          //     name: "📊 Статус",
-          //     value: action,
-          //     inline: true,
-          //   },
+          {
+            name: "📊 Статус",
+            value: action,
+            inline: true,
+          },
           {
             name: "🌿 Ветки",
             value: `${pr.source.branch.name} → ${pr.destination.branch.name}`,
