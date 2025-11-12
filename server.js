@@ -33,7 +33,7 @@ function formatCommitMessage(commit, repository, branch) {
     embeds: [
       {
         title: "🔔 Новый коммит",
-        description: commit.message || "Без описания",
+        description: commit.message || "",
         color: 0x0052cc,
         fields: [
           {
@@ -89,7 +89,7 @@ function formatPRMessage(pr, action) {
     embeds: [
       {
         title: `${emoji} Pull Request: ${pr.title}`,
-        description: pr.description || "Без описания",
+        description: pr.description || "",
         color: color,
         fields: [
           {
@@ -97,11 +97,11 @@ function formatPRMessage(pr, action) {
             value: pr.author.display_name,
             inline: true,
           },
-          {
-            name: "📊 Статус",
-            value: action,
-            inline: true,
-          },
+          //   {
+          //     name: "📊 Статус",
+          //     value: action,
+          //     inline: true,
+          //   },
           {
             name: "🌿 Ветки",
             value: `${pr.source.branch.name} → ${pr.destination.branch.name}`,
@@ -306,67 +306,67 @@ app.get("/", (req, res) => {
     `);
 });
 
-app.get("/channels", (req, res) => {
-  const channels = Object.keys(WEBHOOKS).map((key) => ({
-    name: key,
-    configured: !WEBHOOKS[key].includes("YOUR_"),
-    url: WEBHOOKS[key].includes("YOUR_") ? "не настроен" : "настроен",
-  }));
+// app.get("/channels", (req, res) => {
+//   const channels = Object.keys(WEBHOOKS).map((key) => ({
+//     name: key,
+//     configured: !WEBHOOKS[key].includes("YOUR_"),
+//     url: WEBHOOKS[key].includes("YOUR_") ? "не настроен" : "настроен",
+//   }));
 
-  res.json({
-    channels: channels,
-    routing: config.routing,
-    endpoints: {
-      specific: "POST /webhook/:channel",
-      smart: "POST /webhook-smart (рекомендуется)",
-      all: "POST /webhook-all",
-    },
-  });
-});
+//   res.json({
+//     channels: channels,
+//     routing: config.routing,
+//     endpoints: {
+//       specific: "POST /webhook/:channel",
+//       smart: "POST /webhook-smart (рекомендуется)",
+//       all: "POST /webhook-all",
+//     },
+//   });
+// });
 
-app.get("/test/:channel", async (req, res) => {
-  try {
-    const channel = req.params.channel;
+// app.get("/test/:channel", async (req, res) => {
+//   try {
+//     const channel = req.params.channel;
 
-    if (!WEBHOOKS[channel]) {
-      return res.status(404).send(`Канал "${channel}" не найден`);
-    }
+//     if (!WEBHOOKS[channel]) {
+//       return res.status(404).send(`Канал "${channel}" не найден`);
+//     }
 
-    await sendToDiscord(WEBHOOKS[channel], {
-      content: `✅ Тест канала **${channel}**!`,
-      embeds: [
-        {
-          title: "Тестовое уведомление",
-          description:
-            "Если вы видите это сообщение, webhook работает правильно!",
-          color: 0x00ff00,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    });
+//     await sendToDiscord(WEBHOOKS[channel], {
+//       content: `✅ Тест канала **${channel}**!`,
+//       embeds: [
+//         {
+//           title: "Тестовое уведомление",
+//           description:
+//             "Если вы видите это сообщение, webhook работает правильно!",
+//           color: 0x00ff00,
+//           timestamp: new Date().toISOString(),
+//         },
+//       ],
+//     });
 
-    res.send(`✅ Тестовое сообщение отправлено в канал: ${channel}`);
-  } catch (error) {
-    res.status(500).send("Ошибка: " + error.message);
-  }
-});
+//     res.send(`✅ Тестовое сообщение отправлено в канал: ${channel}`);
+//   } catch (error) {
+//     res.status(500).send("Ошибка: " + error.message);
+//   }
+// });
 
-app.get("/test-all", async (req, res) => {
-  try {
-    let sent = 0;
-    for (const [channel, webhookUrl] of Object.entries(WEBHOOKS)) {
-      if (!webhookUrl.includes("YOUR_")) {
-        await sendToDiscord(webhookUrl, {
-          content: `✅ Тест канала **${channel}**!`,
-        });
-        sent++;
-      }
-    }
-    res.send(`✅ Отправлено тестовых сообщений: ${sent}`);
-  } catch (error) {
-    res.status(500).send("Ошибка: " + error.message);
-  }
-});
+// app.get("/test-all", async (req, res) => {
+//   try {
+//     let sent = 0;
+//     for (const [channel, webhookUrl] of Object.entries(WEBHOOKS)) {
+//       if (!webhookUrl.includes("YOUR_")) {
+//         await sendToDiscord(webhookUrl, {
+//           content: `✅ Тест канала **${channel}**!`,
+//         });
+//         sent++;
+//       }
+//     }
+//     res.send(`✅ Отправлено тестовых сообщений: ${sent}`);
+//   } catch (error) {
+//     res.status(500).send("Ошибка: " + error.message);
+//   }
+// });
 
 // ============================================
 // ЗАПУСК
