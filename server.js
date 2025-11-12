@@ -82,6 +82,78 @@ function formatPRMessage(pr, action) {
     emoji = "❌";
   }
 
+  // Формирование информации о ревьюерах
+  let reviewersInfo = "Нет ревьюеров";
+  if (pr.reviewers && pr.reviewers.length > 0) {
+    const reviewersList = pr.reviewers
+      .map((reviewer) => {
+        const status = reviewer.approved ? "✅" : "⏳";
+        return `${status} ${reviewer.user?.display_name || reviewer.display_name || "Неизвестно"}`;
+      })
+      .join("\n");
+    reviewersInfo = reviewersList;
+  }
+
+  // Формирование информации о комментариях
+  let commentCount = "0";
+  if (pr.comment_count !== undefined) {
+    commentCount = pr.comment_count.toString();
+  }
+
+  const fields = [
+    {
+      name: "👤 Автор",
+      value: pr.author.display_name,
+      inline: true,
+    },
+    {
+      name: "📊 Статус",
+      value: action,
+      inline: true,
+    },
+    {
+      name: "💬 Комментарии",
+      value: commentCount,
+      inline: true,
+    },
+    {
+      name: "🌿 Ветки",
+      value: `${pr.source.branch.name} → ${pr.destination.branch.name}`,
+      inline: false,
+    },
+    {
+      name: "👁️ Ревьюеры",
+      value: reviewersInfo,
+      inline: false,
+    },
+  ];
+
+  // Добавляем дату создания и обновления
+  if (pr.created_on) {
+    fields.push({
+      name: "📅 Создан",
+      value: new Date(pr.created_on).toLocaleString("ru-RU"),
+      inline: true,
+    });
+  }
+
+  if (pr.updated_on) {
+    fields.push({
+      name: "🔄 Обновлён",
+      value: new Date(pr.updated_on).toLocaleString("ru-RU"),
+      inline: true,
+    });
+  }
+
+  // Добавляем причину отклонения, если PR был отклонён
+  if (action === "DECLINED" && pr.reason) {
+    fields.push({
+      name: "📝 Причина",
+      value: pr.reason,
+      inline: false,
+    });
+  }
+
   return {
     username: "Bitbucket Bot",
     avatar_url:
@@ -91,23 +163,7 @@ function formatPRMessage(pr, action) {
         title: `${emoji} Pull Request: ${pr.title}`,
         description: pr.description || "",
         color: color,
-        fields: [
-          {
-            name: "👤 Автор",
-            value: pr.author.display_name,
-            inline: true,
-          },
-          {
-            name: "📊 Статус",
-            value: action,
-            inline: true,
-          },
-          {
-            name: "🌿 Ветки",
-            value: `${pr.source.branch.name} → ${pr.destination.branch.name}`,
-            inline: false,
-          },
-        ],
+        fields: fields,
         url: pr.links.html.href,
         timestamp: new Date().toISOString(),
       },
