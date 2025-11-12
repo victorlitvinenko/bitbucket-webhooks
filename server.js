@@ -173,8 +173,6 @@ app.post("/webhook/:channel", async (req, res) => {
       return res.status(404).send("Channel not found");
     }
 
-    console.log(data);
-
     if (data.push && data.push.changes) {
       const repository = data.repository.full_name;
       const changes = data.push.changes;
