@@ -181,7 +181,9 @@ app.post("/webhook/:channel", async (req, res) => {
         const commits = change.commits || [];
         const branch = change.new?.name;
 
-        for (const commit of commits) {
+        // Отправляем только первый коммит
+        if (commits.length > 0) {
+          const commit = commits[0];
           const message = formatCommitMessage(commit, repository, branch);
           await sendToDiscord(WEBHOOKS[channel], message);
         }
@@ -216,7 +218,9 @@ app.post("/webhook-smart", async (req, res) => {
         const commits = change.commits || [];
         const branch = change.new?.name;
 
-        for (const commit of commits) {
+        // Отправляем только первый коммит
+        if (commits.length > 0) {
+          const commit = commits[0];
           const message = formatCommitMessage(commit, repository, branch);
 
           for (const channel of targetChannels) {
@@ -254,7 +258,9 @@ app.post("/webhook-all", async (req, res) => {
         const commits = change.commits || [];
         const branch = change.new?.name;
 
-        for (const commit of commits) {
+        // Отправляем только первый коммит
+        if (commits.length > 0) {
+          const commit = commits[0];
           const message = formatCommitMessage(commit, repository, branch);
 
           for (const webhookUrl of Object.values(WEBHOOKS)) {
