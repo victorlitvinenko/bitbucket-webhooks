@@ -71,7 +71,7 @@ function formatCommitMessage(commit, repository, branch) {
 }
 
 function formatPRMessage(pr, action) {
-  console.log(JSON.stringify(pr, null, 2));
+  // console.log(JSON.stringify(pr, null, 2));
   let color = 0x0052cc;
   let emoji = "📋";
 
