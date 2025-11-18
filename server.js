@@ -71,6 +71,7 @@ function formatCommitMessage(commit, repository, branch) {
 }
 
 function formatPRMessage(pr, action) {
+  console.log(JSON.stringify(pr, null, 2));
   let color = 0x0052cc;
   let emoji = "📋";
 
@@ -88,7 +89,9 @@ function formatPRMessage(pr, action) {
     const reviewersList = pr.reviewers
       .map((reviewer) => {
         const status = reviewer.approved ? "✅" : "⏳";
-        return `${status} ${reviewer.user?.display_name || reviewer.display_name || "Неизвестно"}`;
+        return `${status} ${
+          reviewer.user?.display_name || reviewer.display_name || "Неизвестно"
+        }`;
       })
       .join("\n");
     reviewersInfo = reviewersList;
