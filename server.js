@@ -88,10 +88,14 @@ function formatPRMessage(pr, action) {
   if (pr.reviewers && pr.reviewers.length > 0) {
     const reviewersList = pr.reviewers
       .map((reviewer) => {
-        const status = reviewer.approved ? "✅" : "⏳";
-        return `${status} ${
-          reviewer.user?.display_name || reviewer.display_name || "Неизвестно"
-        }`;
+        const participant = pr.participants?.find(
+          (p) =>
+            p.user?.display_name === reviewer.display_name ||
+            p.user?.uuid === reviewer.uuid
+        );
+        const isApproved = participant?.approved || false;
+        const status = isApproved ? "✅" : "⏳";
+        return `${status} ${reviewer.display_name || "Неизвестно"}`;
       })
       .join("\n");
     reviewersInfo = reviewersList;
